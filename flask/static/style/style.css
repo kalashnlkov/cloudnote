@@ -1,0 +1,33 @@
+#editor-container {
+  height: 720px;
+}
+.w-nav-brand {
+  color: #ffffff;
+}
+.w-nav-brand:hover{
+  color: #ffffff;
+}
+.w-nav-header {
+  background-color: #388DEF;
+}
+
+.notebook-bar {
+  background-color: #F5F5F5;
+}
+.notebar {
+  height: calc(100vh - 4rem);
+}
+.bd-sidebar {
+  border-right: 1px solid #0000001a;
+}
+body {
+  height:100vh;
+}
+.bd-search {
+  position: relative;
+  padding: 1rem 15px;
+  margin-right: -15px;
+  margin-left: -15px;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+  
+}
