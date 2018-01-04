@@ -25,6 +25,15 @@ def login():
         return redirect(url_for('editor'))
     return redirect(url_for('index'))
 
+@app.route("/register", methods=['POST','GET'])
+def regist():
+    return render_template('register.html')
+    if request.methods == 'GET':
+        print(url_for('regist'))
+
+@app.route("/agreement")
+def agreement():
+    return render_template('agreement.html')
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
