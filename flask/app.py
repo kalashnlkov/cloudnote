@@ -1,7 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, jsonify
 from flask import request
-import random
-import SMSService
+from db.User import User
+import sys
+sys.path.append('./db')
 
 app = Flask(__name__)
 
@@ -49,12 +50,13 @@ def regist():
 #TODO send SMS code
 @app.route("/sendSMS", methods=['POST'])
 def sendSMS():
-    print('-------sendSMS------')
     username = request.form['username']
     telephone = request.form['phone']
-    verifycode = random.randint(100000,999999)
-    SMSService.sendSms(str(telephone), str(verifycode))
-    return jsonify({'status':'OK', 'username':username, 'phone':telephone})
+    user = User(username, telephone)
+    status = 'FAIL'
+    if user.regist():
+        status = 'SUCCESS'
+    return jsonify({'status':status, 'username':username, 'phone':telephone})
 
 @app.route("/agreement")
 def agreement():
