@@ -43,7 +43,15 @@ def regist():
         password1 = request.form['password1']
         password2 = request.form['password2']
         telephone = request.form['phone']
-        print('username={} passowrd={}'.format(username,password1))
+        verifycode = request.form['verifycode']
+        if password1 != password2:
+            return u'password dismatch'
+        user = User(username,telephone,password1)
+        user.verifycode = verifycode
+        ret = user.insert()
+        if ret['status']:
+            return redirect(url_for('login'))
+        return ret
         # return redirect(url_for('index'))
     return u'error method'
 
