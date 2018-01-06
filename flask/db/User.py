@@ -1,5 +1,6 @@
 import sys
 sys.path.append('./db')
+import json
 from DBService import getconn
 from SMSService import sendSms
 import random
@@ -19,27 +20,30 @@ class User:
             #check if user exsist
             verify = self.fetchdata()
             if verify[0] is False:
-                return {'status':False, 'message':'internal error'}
+                return json.dumps({'status':False, 'message':'internal error'})
             if verify[1]:
-                return {'status':False, 'message':'user exsist'}
+                return json.dumps({'status':False, 'message':'user exsist'})
             
             #check verifycode
             verify = self.fetchverifycode()
             if verify[0] is False:
-                return {'status':False, 'message':'verifycode internal error'}
-            print(verify[1])
-            if verify[1][3] != self.verifycode:
-                return {'status':False, 'message':'verifycode didnot match'}
+                return json.dumps({'status':False, 'message':'verifycode internal error'})
+            print(verify[1][2])
+            print(self.verifycode)
+            if verify[1][1] != str(self.verifycode):
+                return json.dumps({'status':False, 'message':'verifycode didnot match'})
             
             sql = """INSERT INTO user(`username`,`password`,`telephone`) values(%s,%s,%s)"""
             self.cur.execute(sql,(self.username,self.password,self.telephone))
+            #delete verify code
+            sql = """DELETE FROM regist WHERE `username` = %s""" % (self.username)
+            self.cur.execute(sql)
             self.conn.commit()
-            return {'status':True, 'message':'insert success'}
+            return json.dumps({'status':True, 'message':'insert success'})
         except MySQLdb.Error as e:
             print(e)
             self.conn.rollback()
-            return {'status':False, 'message':e}
-
+            return json.dumps({'status':False, 'message':e})
     def fetchdata(self):
         '''
         User.fetchData => (False,
@@ -61,8 +65,7 @@ class User:
         '''
         data = None
         try:
-            sql = """SELECT username, verifyCode, sendTime """+
-            """FROM regist where username='%s'"""
+            sql = """SELECT username, verifyCode, sendTime FROM regist where username='%s'"""
             self.cur.execute(sql%self.username)
             data = self.cur.fetchone()
             return (True, data)

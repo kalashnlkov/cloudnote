@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, jsonify
 from flask import request
 from db.User import User
+import json
 import sys
 sys.path.append('./db')
 
@@ -44,14 +45,16 @@ def regist():
         password2 = request.form['password2']
         telephone = request.form['phone']
         verifycode = request.form['verifycode']
+        
         if password1 != password2:
             return u'password dismatch'
-        user = User(username,telephone,password1)
+        user = User(str(username),str(telephone),str(password1))
         user.verifycode = verifycode
         ret = user.insert()
+        ret = json.loads(ret)
         if ret['status']:
             return redirect(url_for('login'))
-        return ret
+        return jsonify(ret)
         # return redirect(url_for('index'))
     return u'error method'
 
