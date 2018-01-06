@@ -1,9 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, jsonify
-from flask import request
-from db.User import User
 import json
 import sys
-sys.path.append('./db')
+from flask import Flask, render_template, redirect, url_for, jsonify
+from flask import request, session
+from db.User import User
 
 app = Flask(__name__)
 
@@ -23,13 +22,12 @@ def index():
 def login():
     if request.method == 'GET':
         return render_template('login.html')
-
-    username = request.form['username']
-    password = request.form['password']
-    
-    if  username == password:
-        return redirect(url_for('editor'))
-    return redirect(url_for('index'))
+    user = User(username=request.form['username'],
+                password=request.form['password'])
+    if user.login():
+        session['username'] = user.username
+        return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 @app.route("/regist", methods=['POST','GET'])
 def regist():
@@ -39,16 +37,14 @@ def regist():
         print(url_for('regist'))
         return render_template('register.html')
     if request.method == 'POST':
-        #TODO add db.
         username = request.form['username']
         password1 = request.form['password1']
         password2 = request.form['password2']
         telephone = request.form['phone']
         verifycode = request.form['verifycode']
-        
         if password1 != password2:
             return u'password dismatch'
-        user = User(str(username),str(telephone),str(password1))
+        user = User(str(username), str(telephone), str(password1))
         user.verifycode = verifycode
         ret = user.insert()
         ret = json.loads(ret)
@@ -58,7 +54,6 @@ def regist():
         # return redirect(url_for('index'))
     return u'error method'
 
-#TODO send SMS code
 @app.route("/sendSMS", methods=['POST'])
 def sendSMS():
     username = request.form['username']

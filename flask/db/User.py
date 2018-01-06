@@ -19,18 +19,18 @@ class User:
         try:
             #check if user exsist
             verify = self.fetchdata()
-            if verify[0] is False:
+            if verify['status'] is False:
                 return json.dumps({'status':False, 'message':'internal error'})
-            if verify[1]:
+            if verify['message']:
                 return json.dumps({'status':False, 'message':'user exsist'})
             
             #check verifycode
             verify = self.fetchverifycode()
-            if verify[0] is False:
+            if verify['status'] is False:
                 return json.dumps({'status':False, 'message':'verifycode internal error'})
-            print(verify[1][2])
+            print(verify)
             print(self.verifycode)
-            if verify[1][1] != str(self.verifycode):
+            if verify['message']['verifyCode'] != str(self.verifycode):
                 return json.dumps({'status':False, 'message':'verifycode didnot match'})
             
             sql = """INSERT INTO user(`username`,`password`,`telephone`) values(%s,%s,%s)"""
@@ -44,6 +44,17 @@ class User:
             print(e)
             self.conn.rollback()
             return json.dumps({'status':False, 'message':e})
+    def login(self):
+        ret = self.fetchdata()
+        if not (ret['status'] and ret['message']):
+            return {'status':False,
+                    'message':'status:%s not such user '%ret['status']}
+        ret = ret['message']
+        if self.username == ret['username'] and \
+            self.password == ret['password']:
+            return True
+        return False
+
     def fetchdata(self):
         '''
         User.fetchData => (False,
@@ -54,11 +65,11 @@ class User:
         try:
             sql = """SELECT * FROM user where username='%s'"""
             self.cur.execute(sql%self.username)
-            data = self.cur.fetchone()
-            return (True, data)
+            result = self.dictfetchall()
+            return {'status':True,'message':result[0]}
         except MySQLdb.Error as e:
             print(e)
-            return (False,data)
+            return {'status':False,'message':e}
     def fetchverifycode(self):
         '''
         User.fetchverifycode => (True, (username,verifycode,expiretime))
@@ -67,11 +78,11 @@ class User:
         try:
             sql = """SELECT username, verifyCode, sendTime FROM regist where username='%s'"""
             self.cur.execute(sql%self.username)
-            data = self.cur.fetchone()
-            return (True, data)
+            result = self.dictfetchall()
+            return {'status':True,'message':result[0]}
         except MySQLdb.Error as e:
             print(e)
-            return (False,data)
+            return {'status':False,'message':e}
     def regist(self):
         verifycode = random.randint(100000,999999)
         #sendTime format:1000-01-01 00:00:00
@@ -93,3 +104,9 @@ class User:
             self.conn.close()
         except MySQLdb.Error as e:
             print(e)
+    #MySQL return tuple to json
+    def dictfetchall(self):
+        """Returns all rows from a cursor as a list of dicts"""
+        desc = self.cur.description
+        return  [dict(zip([col[0] for col in desc], row)) 
+                for row in self.cur.fetchall()]
