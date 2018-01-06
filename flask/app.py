@@ -1,5 +1,6 @@
 import json
 import sys
+import os
 from flask import Flask, render_template, redirect, url_for, jsonify
 from flask import request, session
 from db.User import User
@@ -14,12 +15,15 @@ def editor():
 
 @app.route("/")
 def index():
-    # return redirect(url_for('editor'))
-    return render_template('login.html')
+    if 'username' in session:
+        return redirect(url_for('editor'))
+    return redirect(url_for('login'))
 
 
 @app.route("/login", methods=['POST','GET'])
 def login():
+    if 'username' in session:
+        return redirect(url_for('editor'))
     if request.method == 'GET':
         return render_template('login.html')
     user = User(username=request.form['username'],
@@ -64,9 +68,16 @@ def sendSMS():
         status = 'SUCCESS'
     return jsonify({'status':status, 'username':username, 'phone':telephone})
 
+@app.route("/logout", methods=['POST'])
+def logout():
+    usersession = request.cookies.get['session']
+    print(usersession)
+    session.pop(usersession, None)
+
 @app.route("/agreement")
 def agreement():
     return render_template('agreement.html')
 
+app.secret_key = os.urandom(12)
 if __name__ == "__main__":
     app.run(debug=True)
