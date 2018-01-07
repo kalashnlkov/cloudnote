@@ -22,13 +22,13 @@ def index():
 
 @app.route("/login", methods=['POST','GET'])
 def login():
-    if 'username' in session:
-        return redirect(url_for('editor'))
     if request.method == 'GET':
+        if 'username' in session:
+            return redirect(url_for('editor'))
         return render_template('login.html')
     user = User(username=request.form['username'],
                 password=request.form['password'])
-    if user.login():
+    if user.login()['status']:
         session['username'] = user.username
         return redirect(url_for('index'))
     return redirect(url_for('login'))
@@ -68,12 +68,12 @@ def sendSMS():
         status = 'SUCCESS'
     return jsonify({'status':status, 'username':username, 'phone':telephone})
 
-@app.route("/logout", methods=['POST'])
+@app.route("/logout", methods=['POST', 'GET'])
 def logout():
-    usersession = request.cookies.get['session']
+    usersession = request.cookies['session']
     print(usersession)
     session.pop(usersession, None)
-
+    return redirect(url_for('index'))
 @app.route("/agreement")
 def agreement():
     return render_template('agreement.html')
