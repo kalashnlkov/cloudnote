@@ -17,7 +17,12 @@ class User:
         self.password = password
         self.telephone = telephone
         self.gender = gender
-    def insert(self):
+    def insert(self, update=False):
+        """
+        User.insert(self, sql=None)
+        do insert new user when update=False
+        do update user instead
+        """
         try:
             #check if user exsist
             verify = self.fetchdata()
@@ -34,9 +39,14 @@ class User:
             print(self.verifycode)
             if verify['message']['verifyCode'] != str(self.verifycode):
                 return json.dumps({'status':False, 'message':'verifycode didnot match'})
-            
-            sql = """INSERT INTO user(`username`,`password`,`telephone`) values(%s,%s,%s)"""
-            self.cur.execute(sql,(self.username,self.password,self.telephone))
+            if update:
+            #TODO update
+                sql = """UPDATE user set password=%s where username=%s"""
+                self.cur.execute(sql, (user.password, self.username))
+            else
+                sql = """INSERT INTO user(`username`,`password`,`telephone`) values(%s,%s,%s)"""
+                self.cur.execute(sql, (self.username, self.password, self.telephone))
+                
             #delete verify code
             sql = """DELETE FROM regist WHERE `username` = '%s'""" % (self.username)
             self.cur.execute(sql)
@@ -48,6 +58,11 @@ class User:
             e = 'internal error'
             self.conn.rollback()
             return json.dumps({'status':False, 'message':e})
+            
+    def update(self)
+        ret = user.insert(self, True)
+        return ret
+        
     def login(self):
         ret = self.fetchdata()
         if not (ret['status'] and ret['message']):
@@ -87,7 +102,7 @@ class User:
         except MySQLdb.Error as e:
             print(e)
             e = 'internal error'
-            return {'status':False,'message':e[1]}
+            return {'status':False,'message':e}
     def regist(self):
         verifycode = random.randint(100000,999999)
         #sendTime format:1000-01-01 00:00:00
@@ -99,10 +114,11 @@ class User:
             self.conn.commit()
         except MySQLdb.Error as e:
             print(e)
+            e = 'internam error'
             self.conn.rollback()
-            return False
+            return {'status':False, 'message':e}
         sendSms(self.telephone, verifycode,quiet=True)
-        return True
+        return {'status':True, 'message':'send sms success'}
 
     def destory(self):
         try:

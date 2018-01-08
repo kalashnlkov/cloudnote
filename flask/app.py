@@ -74,6 +74,23 @@ def logout():
     print(usersession)
     session.pop(usersession, None)
     return redirect(url_for('index'))
+
+@app.route("/user/update", methods=['POST', 'GET'])
+def update():
+    if request.method == 'GET':
+        return render_template('forget_passwd.html')
+    username = request.form['username']
+    telephone = request.form['phone']
+    password1 = request.form['password1']
+    password2 = request.form['password2']
+    if password1 != password2:
+        return jsonify({'status':'FAIL', 'message':'password dismatch'})
+    user = User(username,telephone,password)
+    ret = user.update()
+    if ret['status']:
+        return jsonify({'status':'SUCCESS', 'message':'password change success'})
+    return jsonify({'status':'FAIL', 'message':'password change failed'})
+    
 @app.route("/agreement")
 def agreement():
     return render_template('agreement.html')
