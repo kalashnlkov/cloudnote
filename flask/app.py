@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template, redirect, url_for, jsonify
 from flask import request, session
 from db.User import User
+from db.Note import Note
 
 app = Flask(__name__)
 
@@ -85,12 +86,26 @@ def update():
     password2 = request.form['password2']
     if password1 != password2:
         return jsonify({'status':'FAIL', 'message':'password dismatch'})
-    user = User(username,telephone,password)
+    user = User(username,telephone,password1)
     ret = user.update()
     if ret['status']:
         return jsonify({'status':'SUCCESS', 'message':'password change success'})
     return jsonify({'status':'FAIL', 'message':'password change failed'})
-    
+
+@app.route("/note/new", methods=['POST'])
+def new_note():
+    #TODO auth check. maybe check session.
+    if request.method != 'POST':
+        #TODO throw a bad request method
+        pass
+    note_name = request.form['notename']
+    note_content = request.form['notecontent']
+    note = Note(note_name,note_content,session['username'])
+    ret = note.insert()
+    if ret['status']:
+        return jsonify({'status':'SUCCESS', 'message':'note insert success'})
+    return jsonify({'status':'FAIL', 'message':ret['message']})
+
 @app.route("/agreement")
 def agreement():
     return render_template('agreement.html')
