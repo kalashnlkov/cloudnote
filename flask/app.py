@@ -1,6 +1,7 @@
 import json
 import sys
 import os
+import time
 from flask import Flask, render_template, redirect, url_for, jsonify
 from flask import request, session
 from db.User import User
@@ -110,6 +111,32 @@ def new_note():
 def agreement():
     return render_template('agreement.html')
 
+@app.route("/file/upload", methods=['POST'])
+def upload():
+    """view to handle upload file
+    """
+    file = request.files.get("file_data")
+    msg = api_upload(app, file)
+    upload_msg = json.loads(msg.data.decode('utf-8'))
+    message = upload_msg.get('message')
+    return jsonify({'status':'SUCCESS', 'filename':message})
+
+@app.route("/pdf", methods=['GET'])
+def pdf():
+    return render_template("pdf.html")
+def api_upload(app_boj, file):
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    file_dir = os.path.join(basedir,app_boj.config['UPLOAD_FOLDER'])
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
+    fname = file.filename
+    suffix = fname.rsplit('.',1)[1]
+    int_time = int(time.time())
+    new_name = '%s.%s'%(int_time, suffix)
+    file.save(os.path.join(file_dir, new_name))
+    return jsonify({'statys':'SUCCESS', 'message':new_name})
+
+app.config['UPLOAD_FOLDER'] = './static/doc'    
 app.secret_key = os.urandom(12)
 if __name__ == "__main__":
     app.run(debug=True)
