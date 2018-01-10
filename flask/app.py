@@ -4,6 +4,7 @@ import os
 import time
 from flask import Flask, render_template, redirect, url_for, jsonify
 from flask import request, session
+
 from db.User import User
 from db.Note import Note
 
@@ -96,9 +97,6 @@ def update():
 @app.route("/note/new", methods=['POST'])
 def new_note():
     #TODO auth check. maybe check session.
-    if request.method != 'POST':
-        #TODO throw a bad request method
-        pass
     note_name = request.form['notename']
     note_content = request.form['notecontent']
     note = Note(note_name,note_content,session['username'])
@@ -134,6 +132,7 @@ def api_upload(app_boj, file):
     int_time = int(time.time())
     new_name = '%s.%s'%(int_time, suffix)
     file.save(os.path.join(file_dir, new_name))
+    #TODO convert to pdf if not pdf file
     return jsonify({'statys':'SUCCESS', 'message':new_name})
 
 app.config['UPLOAD_FOLDER'] = './static/doc'    

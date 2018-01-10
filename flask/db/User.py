@@ -6,6 +6,8 @@ from SMSService import sendSms
 import random
 from MySQLdb import MySQLError
 import time
+from werkzeug.security import generate_password_hash as GPH
+from werkzeug.security import check_password_hash as CPH
 
 class User:
     verifycode = None
@@ -23,6 +25,8 @@ class User:
         do insert new user when update=False
         do update user instead
         """
+        # sha1 + salt(8)
+        self.password = GPH(self.password)
         try:
             #check if user exsist
             verify = self.fetchdata()
@@ -63,7 +67,7 @@ class User:
         """
         ret = self.insert(True)
         return ret
-
+        
     def login(self):
         """
         User.login
@@ -74,7 +78,7 @@ class User:
                     'message':'status:%s not such user '%ret['status']}
         ret = ret['message']
         if self.username == ret['username'] and \
-            self.password == ret['password']:
+            CPH(ret['pwd_hash'], self.password):
             return {'status':True,
                     'message':'login success'}
         return {'status':False,
