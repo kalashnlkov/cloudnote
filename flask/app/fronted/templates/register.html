@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>用户注册</title>
+		<link href="static/style/register.css" rel="stylesheet">
+		<script src="static/js/jquery-3.2.1.js"></script>
+		<script src="static/js/uploadImg.js" type="text/jscript"></script>
+		<script src="static/js/register.js"></script>
+		<script src="static/js/msgVerify.js"></script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="webName">云笔记</div>
+		</div>
+		<div class="container">
+			<div class="register">
+				<p>普通账号注册</p>
+				<div class="headImg">
+					<img id="pic" src="static/img/head_img.jpg"/>
+					<input id="upload" name="file" accept="image/*" type="file" style="display: none;"   />
+				</div>
+				<section>
+					<form action="/regist" method="post">
+						<div class="register-box">
+							<label>
+								<span>账 &nbsp;号 </span>
+								<input maxlength="20" id="account" type="text" name="username" placeholder="Account"/>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="register-box">
+							<label>
+								<span>设置密码 </span>
+								<input maxlength="20" type="password" name="password1" placeholder="Password"/>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="register-box">
+							<label>
+								<span>确认密码 </span>
+								<input maxlength="20" type="password" name="password2" placeholder="Password Again"/>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="register-box">
+							<label>
+								<span>中国+86 </span>
+								<input id="phone" maxlength="11" type="tel" name="phone" placeholder="Telphone"/>
+								<button type="button" class="code_btn" id="codeBtn" onclick="sendMessage()">发送</button>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="register-box">
+							<label>
+								<span>验 证 码 </span>
+								<input maxlength="6" type="text" name="verifycode" placeholder="Identifying code"/>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="sex-box">
+							<label>
+								<span>性  &nbsp; &nbsp;  别</span>
+								<input name="gender" type="radio" id="man"  value="male" />
+								<label for="man">男</label>
+								<input name="gender" type="radio" id="women" value"female"/>
+								<label for="women">女</label>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="register-box">
+							<label>
+								<span>出生日期</span>
+								<input type="text" name="birthday" placeholder="Eg.1997-06-01"/>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="register-box">
+							<label>
+								<span>邮 &nbsp; &nbsp; 箱</span>
+								<input maxlength="20" type="email" name="email" placeholder="Email"/>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="register-box">
+							<label>
+								<span>城   &nbsp; &nbsp; 市</span>
+								<input maxlength="20" type="text" name="city" placeholder="City"/>
+							</label>
+							<div class="tips"> </div>
+						</div>
+						<div class="arguement">
+							<input type="checkbox" id="xieyi"/>
+							<label for="xieyi"><span></span>阅读并同意</label>
+							<a href="/agreement">《云笔记用户注册协议》</a>
+							<div class="tips"> </div>
+						</div>
+						<div class="submit_btn">
+							<button type="submit" id="submit_btn">注 册</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</div>
+		<div class="footer">
+			<p>Copyright &copy; 15软件工程J班</p>
+		</div>
+</body>
+</html>

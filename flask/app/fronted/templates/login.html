@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="keyword" content="云笔记">
+	<meta name="description" content="云笔记由15软件工程J班同学开发，用户可以随时随地对线上资料进行编辑、分享">
+	<link href="static/style/login.css" rel="stylesheet">
+	<title>云笔记</title>
+</head>
+
+<body>
+	<div class="header">
+		<div class="webName">云笔记</div>
+	</div>
+
+	<div class="container">
+		<div class="login">
+			<p>账号登录</p>
+			<form action="{{ url_for('.login') }}" method="post">
+				<input type="text" name="username" placeholder="账号" required="required">
+				<input type="password" name="password" placeholder="密码" required="required">
+				<div class="tick">
+					<input type="checkbox" id="brand1" value="">
+					<label for="brand1">
+						<span></span>自动登录</label>
+					</input>
+					<a id="forget" href="#">忘记密码？</a>
+				</div>
+				<div class="send-button">
+					<input type="submit" value="登 录">
+					<input type="submit" value="注册">
+				</div>
+			</form>
+		</div>
+		<div class="middle"> </div>
+		<div class="social">
+			<p>第三方登录</p>
+			<ul>
+				<li class="qq">
+					<button id="qqLogin">
+						<span class="icons"></span>
+						<span class="text">使用QQ账号登录</span>
+					</button>
+				</li>
+				<li class="weixin">
+					<button id="weixinLogin">
+						<span class="icons"></span>
+						<span class="text">使用微信账号登录</span>
+					</button>
+				</li>
+				<li class="weibo">
+					<button id="weiboLogin">
+						<span class="icons"></span>
+						<span class="text">使用微博账号登录</span>
+					</button>
+				</li>
+				<div class="clear"> </div>
+			</ul>
+		</div>
+	</div>
+
+	<div class="footer">
+		<p>Copyright &copy; 15软件工程J班</p>
+	</div>
+</body>
+
+</html>
