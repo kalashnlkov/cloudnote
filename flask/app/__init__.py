@@ -13,15 +13,22 @@ login_manager.login_view = "auth.index"
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-
+    app.secret_key = "testkey"
     db.init_app(app)
     login_manager.init_app(app)
 
     from app.auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    app.register_blueprint(auth_blueprint, url_prefix='/api/auth')
 
     from app.fronted import fronted as fronted_blueprint
     app.register_blueprint(fronted_blueprint)
+
+    from app.note import note as note_blueprint
+    app.register_blueprint(note_blueprint, url_prefix='/api/note')
+
+    from app.notebook import notebook as notebook_blueprint
+    app.register_blueprint(notebook_blueprint, url_prefix='/api/notebook')
+
     return app
 
 @login_manager.user_loader

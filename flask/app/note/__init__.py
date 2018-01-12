@@ -3,4 +3,4 @@ from flask import Blueprint
 
 note = Blueprint('note', __name__)
 
-from app.todo import routes
+from app.note import routes
